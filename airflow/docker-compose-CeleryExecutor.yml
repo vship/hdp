@@ -2,10 +2,14 @@ version: '2.1'
 services:
     redis:
         image: 'redis:5.0.5'
+        networks:
+            - cda        
         command: redis-server --requirepass redispass
 
     postgres:
         image: postgres:9.6
+        networks:
+            - cda        
         environment:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
@@ -17,6 +21,8 @@ services:
     webserver:
         image: puckel/docker-airflow:1.10.9
         restart: always
+        networks:
+            - cda        
         depends_on:
             - postgres
             - redis
@@ -44,6 +50,8 @@ services:
     flower:
         image: puckel/docker-airflow:1.10.9
         restart: always
+        networks:
+            - cda        
         depends_on:
             - redis
         environment:
@@ -56,6 +64,8 @@ services:
     scheduler:
         image: puckel/docker-airflow:1.10.9
         restart: always
+        networks:
+            - cda        
         depends_on:
             - webserver
         volumes:
@@ -75,6 +85,8 @@ services:
     worker:
         image: puckel/docker-airflow:1.10.9
         restart: always
+        networks:
+            - cda        
         depends_on:
             - scheduler
         volumes:
