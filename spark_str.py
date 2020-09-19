@@ -51,7 +51,7 @@ def process(time, rdd):
     try:
         spark = getSparkSessionInstance(rdd.context.getConf())
 
-        rowRdd = rdd.map(lambda w: Row(branch=w['branch'],
+        rowRdd = rdd.map(lambda w: Row(branch=w['food'],
                                        currency=w['currency'],
                                        amount=w['amount']))
                                        

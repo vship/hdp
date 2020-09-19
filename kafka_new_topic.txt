@@ -1,1 +1,21 @@
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic test
+/usr/hdp/current/kafka-broker
+
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic food
+
+
+bin/kafka-topics --zookeeper localhost:2181 --delete --topic test
+
+
+
+bin/kafka-console-producer.sh --broker-list sandbox-hdp.hortonworks.com:6667 --topic food
+
+
+
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic food --from-beginning
+this is just a test
+
+sudo -u hdfs hadoop fs -mkdir /user
+
+
+
+/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1 readpyspark.py

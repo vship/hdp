@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 
 from numpy.random import choice, randint
 from time import sleep
@@ -9,7 +9,7 @@ from kafka.errors import KafkaError
 def get_random_value():
     new_dict = {}
 
-    branch_list = ['Soup', 'Burger', 'Pasta', 'Pizza']
+    food_list = ['Soup', 'Burger', 'Pasta', 'Pizza']
     currency_list = ['RUB', 'USD', 'EUR', 'GBP']
 
     new_dict['food'] = choice(food_list)
@@ -21,11 +21,11 @@ def get_random_value():
 
 if __name__ == "__main__":
 
-    producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+    producer = KafkaProducer(bootstrap_servers=['sandbox-hdp.hortonworks.com:6667'],
                              value_serializer=lambda x:dumps(x).encode('utf-8'),
                              compression_type='gzip')
 
-    my_topic = 'test'
+    my_topic = 'food'
 
     while True:  
         for _ in range(100):
