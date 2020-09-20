@@ -19,3 +19,6 @@ sudo -u hdfs hadoop fs -mkdir /user
 
 
 /bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1 readpyspark.py
+
+
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1,\org.postgresql:postgresql:9.4.1207 readpark.py
