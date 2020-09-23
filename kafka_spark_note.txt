@@ -1,11 +1,16 @@
-/usr/hdp/current/kafka-broker
+1)/usr/hdp/current/kafka-broker
+2)Создаём файл с скриптом наполнения
+3)обновляем питон и пипs
+4)создаём топик
 
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic food
 
+а если надо, то удаляем:
+bin/kafka-topics --zookeeper localhost:2181 --delete --topic food
 
-bin/kafka-topics --zookeeper localhost:2181 --delete --topic test
+5) запускаем скрипт наполнения топика
 
-
+python3.6 kafka_producer.py
 
 bin/kafka-console-producer.sh --broker-list sandbox-hdp.hortonworks.com:6667 --topic food
 

@@ -20,6 +20,7 @@ services:
 
     webserver:
         image: puckel/docker-airflow:1.10.9
+        build: .
         restart: always
         networks:
             - cda        
@@ -27,17 +28,21 @@ services:
             - postgres
             - redis
         environment:
-            - LOAD_EX=n
+            - LOAD_EX=y
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
             - REDIS_PASSWORD=redispass
+            - SPARK_HOME=/usr/local/spark
+            - HADOOP_CONF_DIR=/usr/local/spark/conf
         volumes:
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
+            - ./files:/files
+            - ./spark/spark:/usr/local/spark
         ports:
             - "8181:8080"
         command: webserver
@@ -63,6 +68,7 @@ services:
 
     scheduler:
         image: puckel/docker-airflow:1.10.9
+        build: .
         restart: always
         networks:
             - cda        
@@ -71,7 +77,9 @@ services:
         volumes:
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
+            - ./files:/files
+            - ./spark/spark:/usr/local/spark            
         environment:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
@@ -80,10 +88,13 @@ services:
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
             - REDIS_PASSWORD=redispass
+            - SPARK_HOME=/usr/local/spark
+            - HADOOP_CONF_DIR=/usr/local/spark/conf
         command: scheduler
 
     worker:
         image: puckel/docker-airflow:1.10.9
+        build: .
         restart: always
         networks:
             - cda        
@@ -92,7 +103,9 @@ services:
         volumes:
             - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./plugins:/usr/local/airflow/plugins
+            - ./plugins:/usr/local/airflow/plugins
+            - ./files:/files
+            - ./spark/spark:/usr/local/spark
         environment:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
@@ -100,6 +113,8 @@ services:
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
             - REDIS_PASSWORD=redispass
+            - SPARK_HOME=/usr/local/spark
+            - HADOOP_CONF_DIR=/usr/local/spark/conf
         command: worker
 
 networks:
