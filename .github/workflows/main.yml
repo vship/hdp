@@ -1,0 +1,27 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Copy DAG
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'airflow/dag/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+   
+    steps:
+      - name: Copy DAG
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: airflow/dag
+          remote: home/vship/airflow/dags
+          privateKey : ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.AIRFLOW_HOST }}
+        env:
+          CI: true
