@@ -66,6 +66,11 @@ read_parquet.py - читает файл и выводит в консоль ча
 Запуск для проверки:
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1 jobname.py
 или:
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1,\org.postgresql:postgresql:9.4.1207 jobname.py  -при работы с бд
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1,\org.postgresql:postgresql:9.4.1207 jobname.py  -при работе с бд
 
 10)
+Теперь надо настроить запуск джобов через airflow
+админка airflow доступна на порту 8181
+Закидываем dag из папки airflow - dags_livy_pyspark.py
+В настройках добавляем новый коннект livy тип http, указываем имя контейнера hdp-sandbox и порт 8999
+после этого можно пробовать запускать dag
