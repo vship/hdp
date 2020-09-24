@@ -50,7 +50,7 @@ pip3 install kafka
 удалить его можно так:
 bin/kafka-topics --zookeeper localhost:2181 --delete --topic food
 скачиваем в контейнер скрипт наполнения топика kafka_producer.py
-запускаем 
+даём права chmod a+x kafka_producer.py и запускаем 
 python3.6 kafka_producer.py
 Останавливаем заполнение когда решим что хватит
 
@@ -70,7 +70,8 @@ spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1,\org.po
 
 10)
 Теперь надо настроить запуск джобов через airflow
-админка airflow доступна на порту 8181
+В админке hdp надо отключить livy.server.csrf_protection.enabled - в spark2 - config - advanced livy2-conf - livy.server.csrf_protection.enabled = false
+Идем в админку airflow (доступна на порту 8181)
 Закидываем dag из папки airflow - dags_livy_pyspark.py
-В настройках добавляем новый коннект livy тип http, указываем имя контейнера hdp-sandbox и порт 8999
+В настройках добавляем новый коннект livy тип http, указываем имя контейнера sandbox-hdp и порт 8999
 после этого можно пробовать запускать dag

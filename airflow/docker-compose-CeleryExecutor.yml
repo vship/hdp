@@ -20,7 +20,6 @@ services:
 
     webserver:
         image: puckel/docker-airflow:1.10.9
-        build: .
         restart: always
         networks:
             - cda        
@@ -38,7 +37,7 @@ services:
             - SPARK_HOME=/usr/local/spark
             - HADOOP_CONF_DIR=/usr/local/spark/conf
         volumes:
-            - /home/dags:/usr/local/airflow/dags
+            - /dock/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
         ports:
             - "8181:8080"
@@ -65,14 +64,13 @@ services:
 
     scheduler:
         image: puckel/docker-airflow:1.10.9
-        build: .
         restart: always
         networks:
             - cda        
         depends_on:
             - webserver
         volumes:
-            - /home/dags:/usr/local/airflow/dags
+            - /dock/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
         environment:
             - LOAD_EX=n
@@ -88,14 +86,13 @@ services:
 
     worker:
         image: puckel/docker-airflow:1.10.9
-        build: .
         restart: always
         networks:
             - cda        
         depends_on:
             - scheduler
         volumes:
-            - /home/dags:/usr/local/airflow/dags
+            - /dock/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # ./plugins:/usr/local/airflow/plugins
         environment:
