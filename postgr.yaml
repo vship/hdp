@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+    db:
+        image: postgres
+        networks:
+            - cda 
+        restart: always
+        environment:
+            - POSTGRES_USER=spark
+            - POSTGRES_PASSWORD=spark
+            - POSTGRES_DB=spark
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+             - ./pgdatatest:/var/lib/postgresql/data/pgdata
+
+    adminer:
+        image: adminer
+        networks:
+            - cda 
+        restart: always
+        ports:
+          - 9292:8080
+networks:
+    cda:
+        external:
+            name: cda

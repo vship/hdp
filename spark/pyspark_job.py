@@ -26,4 +26,4 @@ df = spark \
 df2 = df.select(from_json("value", foodSchema).alias("Foods")).select("Foods.*")
 df2.show(5)
 df2.printSchema()
-df2.write.parquet("/spark_files/df2.parquet")
+df2.write.parquet("/spark_files/df.parquet")

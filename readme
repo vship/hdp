@@ -1,0 +1,71 @@
+Установка на centos7
+Подключаемся по ssh 
+1) Выключаем SELinux
+sudo vi /etc/sysconfig/selinux
+SELINUX=disabled
+
+2) Установим Git : sudo yum install git -y
+3) Установка докера из репозитория - https://docs.docker.com/engine/install/centos/
+   тестируем
+
+4) устанавливаем hdp-sandbox через скрипт с сайта:
+https://www.cloudera.com/tutorials/sandbox-deployment-and-install-guide/3.html
+
+Заходим в контейнер sandbox-hdp : docker exec -it sandbox-hdp bash
+сбрасываем пароль админа
+
+ambari-admin-password-reset
+_________
+
+5) Устанавливаем airflow
+
+docker-compose-CeleryExecutor.yml в папке airflow, качаем его себе на сервер
+Поднимаем все контенейры:
+docker-compose -f docker-compose-CeleryExecutor.yml down -d
+Для работы livy оператора надо установить:
+pip install airflow-livy-operators
+__________
+
+6)Для тестов записи поднимем БД с админкой
+Файл postgr.yaml в корне
+docker-compose -f postgr.yaml up -d
+
+админка будет доступна на порту 9292
+Для скрипта:
+            - POSTGRES_USER=spark
+            - POSTGRES_PASSWORD=spark
+            - POSTGRES_DB=spark
+
+7) Теперь нам надо сделать топик кафки и наполнить его:
+Заходим в контейнер хадупа: 
+docker exec -it sandbox-hdp bash
+Готовим python:
+python3.6 -m ensurepip
+pip3 install --upgrade pip
+pip3 install numpy
+pip3 install kafka
+
+Теперь создаём новый топик:
+/usr/hdp/current/kafka-broker/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic food
+удалить его можно так:
+bin/kafka-topics --zookeeper localhost:2181 --delete --topic food
+скачиваем в контейнер скрипт наполнения топика kafka_producer.py
+запускаем 
+python3.6 kafka_producer.py
+Останавливаем заполнение когда решим что хватит
+
+8)Подготовим hdfs
+sudo -u hdfs hadoop fs -mkdir /spark_files
+sudo -u hdfs hadoop fs chmod 777 /spark_files
+
+9)В папке spark подготовлены джобы sparka
+pyspark_job.py - забираем данные из топика, парсим, закидываем в /spark_files/df.parquet
+parq2postgr.py - переливает из созданного файла в БД
+read_parquet.py - читает файл и выводит в консоль часть данных (для тестирования)
+
+Запуск для проверки:
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1 jobname.py
+или:
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1,\org.postgresql:postgresql:9.4.1207 jobname.py  -при работы с бд
+
+10)

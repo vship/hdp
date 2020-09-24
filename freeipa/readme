@@ -1,0 +1,58 @@
+3)Устанавливаем FreeIPA
+Создаём папку для конфигов
+sudo mkdir -p /opt/dockers/freeipa-data
+Не хочу вырубать SE LINUX =)
+setsebool -P container_manage_cgroup 1
+
+sudo docker run --name ipa.server.local -ti \
+    -h ipa.server.local \
+    --sysctl net.ipv6.conf.all.disable_ipv6=0 \
+    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+    -v /opt/dockers/freeipa-data:/data \
+    -p 443:443 \
+    --network=cda \
+    freeipa/freeipa-server:latest
+
+
+search server.local
+nameserver 127.0.0.1
+
+
+
+4)Настраиваем связь между контейнерами
+
+4.1) добавляем default_ccache_name = /tmp/krb5cc_%{uid}
+
+vi /etc/krb5.conf
+
+
+4.2)
+делаем пользователя на FreeIPA
+https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.4/authentication-with-kerberos/content/kerberos_optional_use_an_existing_ipa.html
+
+User login: hadoopadmin
+  First name: Hadoop
+  Last name: Admin
+  Full name: Hadoop Admin
+  Display name: Hadoop Admin
+  Initials: HA
+  Home directory: /home/hadoopadmin
+  GECOS: Hadoop Admin
+  Login shell: /bin/sh
+  Principal name: hadoopadmin@SERVER.LOCAL
+  Principal alias: hadoopadmin@SERVER.LOCAL
+  User password expiration: 20200909163539Z
+  Email address: hadoopadmin@server.local
+  UID: 1698400001
+  GID: 1698400001
+  Password: True
+  Member of groups: ipausers
+  Kerberos keys available: True
+
+4.3) Установливаем на sandbox-hdp ipa admintools
+заводим в домен
+ipa-client-install 
+
+После того как завели в домен, проверяем и через веб интефейс включен керберос
+
+Готово
