@@ -9,7 +9,7 @@ on:
     branches:
       - master
     paths:
-      - '/airflow/dag/**'
+      - 'airflow/dag/**'
 
 jobs:
   build:
