@@ -23,7 +23,7 @@ jobs:
         with:
           local: airflow/dag
           remote: home/vship/airflow/dags
-          user: ${{ secrets.GIT_USER }}
+          username: ${{ secrets.GIT_USER }}
           privateKey : ${{ secrets.SSH_KEY }}
           host: ${{ secrets.AIRFLOW_HOST }}
         env:
