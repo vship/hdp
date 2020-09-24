@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
    
     steps:
+      - name: Git clone
+        uses: actions/checkout@v2
       - name: Copy DAG
         uses: garygrossgarten/github-action-scp@release
         with:
