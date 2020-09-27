@@ -73,7 +73,7 @@ filterdf.write \
 df = LivySessionOperator(
     name="02_session_lyvy_{{ run_id }}",
     statements=[
-        LivySessionOperator.Statement(code=pyspark_code_db, kind="pyspark"),
+        LivySessionOperator.Statement(code=pyspark_code, kind="pyspark"),
     ],
 #    params={"your_number": 5, "your_string": "Hello world"},
     conf={"spark.jars.packages": "org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1"},
