@@ -53,7 +53,7 @@ spark = SparkSession.builder \
     .master("cluster") \
     .appName("parquet_to_db") \
     .getOrCreate()
-df = spark.read.parquet('df.parquet')
+df = spark.read.parquet('/spark_files/df.parquet')
 df.show(10)
 filterdf = df.filter(df.food == "Pizza").sort(df.currency)
 filterdf.show(10)
