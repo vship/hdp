@@ -43,7 +43,7 @@ df = spark \
 df2 = df.select(from_json("value", foodSchema).alias("Foods")).select("Foods.*")
 df2.show(5)
 df2.printSchema()
-df2.write.parquet("/spark_files/df.parquet")
+df2.write.mode('overwrite').parquet("/spark_files/df.parquet")
 """
 
 pyspark_code_db = """
@@ -77,7 +77,7 @@ df = LivySessionOperator(
     ],
 #    params={"your_number": 5, "your_string": "Hello world"},
     conf={"spark.jars.packages": "org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1"},
-    driver_memory='1g',
+    driver_memory='2g',
     task_id="02_lyvy_readkafka",
     dag=dag,
 )
@@ -89,7 +89,7 @@ db = LivySessionOperator(
     ],
 #    params={"your_number": 5, "your_string": "Hello world"},
     conf={"spark.jars.packages": "org.postgresql:postgresql:9.4.1207"},
-    driver_memory='1g',
+    driver_memory='2g',
     task_id="02_lyvy_writedb",
     dag=dag,
 )
