@@ -7,7 +7,7 @@ dag = DAG(
     "02_session_lyvy",
     description="Run Spark job via Livy Sessions",
     schedule_interval=None,
-    start_date=datetime(2020, 2, 3),
+    start_date=datetime(2020, 6, 3),
     catchup=False,
 )
 
