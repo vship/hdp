@@ -43,7 +43,39 @@ df = spark \
 df2 = df.select(from_json("value", foodSchema).alias("Foods")).select("Foods.*")
 df2.show(5)
 df2.printSchema()
-df2.write.parquet("/spark_files/df2.parquet")
+df2.write.parquet("/spark_files/df.parquet")
+"""
+
+pyspark_code2 = """
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json
+from pyspark.sql.types import *
+
+addressSchema = [StructField("food", StringType(), True),
+                 StructField("amount", FloatType(), True),
+                 StructField("currency", StringType(), True)]
+
+foodSchema = StructType(addressSchema)
+
+spark = SparkSession.builder \
+    .master("cluster") \
+    .appName("food") \
+    .getOrCreate()
+
+df = spark \
+    .read \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "sandbox-hdp.hortonworks.com:6667") \
+    .option("subscribe", "food") \
+    .load() \
+    .selectExpr("CAST(value AS STRING)")
+#    .select(from_json(col("value").cast("string"), foodSchema))
+#df.show(5)
+#df.printSchema()
+df2 = df.select(from_json("value", foodSchema).alias("Foods")).select("Foods.*")
+df2.show(5)
+df2.printSchema()
+df2.write.parquet("/spark_files/df3.parquet")
 """
 
 # See the results of each statement's executions under "Logs" tab of the task.
@@ -62,7 +94,7 @@ df = LivySessionOperator(
 db = LivySessionOperator(
     name="02_session_lyvy_{{ run_id }}",
     statements=[
-        LivySessionOperator.Statement(code=pyspark_code, kind="pyspark"),
+        LivySessionOperator.Statement(code=pyspark_code2, kind="pyspark"),
     ],
 #    params={"your_number": 5, "your_string": "Hello world"},
     conf={"spark.jars.packages": "org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1"},
