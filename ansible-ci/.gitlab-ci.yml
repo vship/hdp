@@ -1,0 +1,30 @@
+stages:
+  - change_config
+  - commit_newconf
+
+change_config:
+  stage: change_config
+  only:
+    changes:
+     - spark2/*
+  tags:
+    - ansible
+  script:
+    - ansible-playbook --vault-password-file ~/.vpasswd spark2/spark.yaml
+
+commit_newconf:
+  stage: commit_newconf
+  only:
+    changes:
+     - spark2/*
+  tags:
+    - ansible 
+  script:
+    - ansible-playbook --vault-password-file ~/.vpasswd ambari-config/get_json.yaml
+    - git add ambari-config/blueprint.json
+    - git commit -m "GitLab Runner Push"
+    - git push http://$NAME_RUNNER:$TOKEN_RUNNER@172.17.17.32/shipov/hdp-ansible.git HEAD:master
+
+  #artifacts:
+  #  paths:
+  #    - builds/

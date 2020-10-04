@@ -1,0 +1,22 @@
+- hosts: 127.0.0.1
+  connection: local
+  tasks: 
+  - name: import var
+    include_vars:
+      dir: ../group_vars
+  - name: delete old config
+    file:
+      path: "{{playbook_dir}}/blueprint.json"
+      state: absent
+  - name: Get new config
+    become: true
+    uri:
+      url: "http://hadoop:8080/api/v1/clusters/Sandbox?format=blueprint"
+      method: GET
+      force_basic_auth: yes
+      user: "{{ login_admin }}"
+      password: "{{ pass_admin }}"
+      headers: '{"X-Requested-By":"ambari", "Content-Type":"text/plain"}'
+      dest: "{{playbook_dir}}/blueprint.json"
+      status_code: 200,201,202,409
+      timeout: 60

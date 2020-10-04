@@ -1,0 +1,29 @@
+- hosts: hadoop
+  tasks:
+  - name: import var
+    include_vars:
+      dir: ../group_vars
+  - name: Upload new config
+    become: true
+    uri:
+      url: "http://sandbox-hdp.hortonworks.com:8080/api/v1/clusters/Sandbox"
+      method: PUT
+      force_basic_auth: yes
+      user: "{{ login_admin }}"
+      password: "{{ pass_admin }}"
+      headers: '{"X-Requested-By":"ambari", "Content-Type":"text/plain"}'
+      body: "{{ lookup('file','{{playbook_dir}}/conf_livy.json') }}"
+      body_format: json
+      status_code: 200,201,202,409
+      timeout: 60
+      return_content: no
+- hosts: 127.0.0.1
+  connection: local
+  tasks: 
+  - name: import var
+    include_vars:
+      dir: ../group_vars  
+  - name: restart service
+    command: 'curl -u {{ login_admin }}:{{ pass_admin }} -H "X-Requested-By: ambari"  -X POST -d ''{"RequestInfo":{"command":"RESTART","context":"Restart all required services","operation_level":"host_component"},"Requests/resource_filters":[{"hosts_predicate":"HostRoles/stale_configs=true&HostRoles/cluster_name=Sandbox"}]}'' http://hadoop:8080/api/v1/clusters/Sandbox/requests'
+    args:
+      warn: no
